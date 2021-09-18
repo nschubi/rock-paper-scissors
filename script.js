@@ -48,20 +48,26 @@ function playRound(playerSelection, computerSelection){
 function game(){
     let playerWon = 0;
     let computerWon = 0;
-
-    let i;
-    for(i = 0; i < 5; i++){
-        let result = playRound(prompt("Rock, Paper, Scissors?"), computerPlay());
-        console.log(result)
+    
+    const screen = document.querySelector('#gameScreen');
+    
+    const selectors = Array.from(document.querySelectorAll('button.selectionBtn'));
+    selectors.forEach(selector => selector.addEventListener('click', function () {
+        let result = playRound(selector.innerHTML, computerPlay());
         if(result.includes("You win")){
             playerWon++;
         }else if(result.includes("You lose")){
             computerWon++;
-        }else{
-            i--;
         }
-        console.log("You:" + playerWon + " Computer:" + computerWon);
+        screen.appendChild(document.createTextNode(result))
+        screen.appendChild(document.createElement('p'))
+    }));
+
+    while(screen.firstChild != undefined){
+        screen.removeChild(screen.firstChild)
     }
+
+    console.log("You:" + playerWon + " Computer:" + computerWon);
     console.log("Game Over: " + (playerWon > computerWon ? "You win." : "You lose."));
 }
 
