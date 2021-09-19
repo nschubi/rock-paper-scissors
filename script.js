@@ -1,3 +1,7 @@
+let playerWon = 0;
+let computerWon = 0;
+let screen;
+
 function computerPlay(){
     let arr = ["Rock", "Paper", "Scissors"];
     return arr[Math.floor(Math.random() * arr.length)];
@@ -10,6 +14,7 @@ function capitalize(word){
 }
 
 function playRound(playerSelection, computerSelection){
+    console.log('call function playRound')
     let player = capitalize(playerSelection);
 
     if(player == computerSelection){
@@ -42,32 +47,48 @@ function playRound(playerSelection, computerSelection){
     }
 }
 
-/**
- * Start a game of RPS with 5 rounds
- */
-function game(){
-    let playerWon = 0;
-    let computerWon = 0;
-    
-    const screen = document.querySelector('#gameScreen');
-    
-    const selectors = Array.from(document.querySelectorAll('button.selectionBtn'));
-    selectors.forEach(selector => selector.addEventListener('click', function () {
-        let result = playRound(selector.innerHTML, computerPlay());
-        if(result.includes("You win")){
-            playerWon++;
-        }else if(result.includes("You lose")){
-            computerWon++;
-        }
-        screen.appendChild(document.createTextNode(result))
-        screen.appendChild(document.createElement('p'))
-    }));
-
+function reset(){
+    console.log('call function reset')
+    playerWon = 0;
+    computerWon = 0;
+    screen = document.querySelector('#gameScreen');
+    updateScore();
     while(screen.firstChild != undefined){
         screen.removeChild(screen.firstChild)
     }
+}
 
-    console.log("You:" + playerWon + " Computer:" + computerWon);
-    console.log("Game Over: " + (playerWon > computerWon ? "You win." : "You lose."));
+function updateScore(){
+    const scorePlayer = document.querySelector('#playerScore');
+    const scoreComp = document.querySelector('#computerScore');
+    scorePlayer.innerText = 'You: ' + playerWon;
+    scoreComp.innerText = 'Computer: ' + computerWon;
+    if(playerWon >= 5){
+        alert("You won the game. The final score was: You " + playerWon + " : " + computerWon + " Computer");
+        reset();
+    }else if(computerWon >= 5){
+        alert("You lost the game. The final score was: You " + playerWon + " : " + computerWon + " Computer");
+        reset();
+    }
+}
+/**
+ * Start a game of RPS
+ */
+function game(){
+    console.log('call function game')
+    reset();
+    const selectors = Array.from(document.querySelectorAll('button.selectionBtn'));
+    selectors.forEach(selector => selector.addEventListener('click', function () {
+        let result = playRound(selector.textContent, computerPlay());
+        screen.appendChild(document.createTextNode(result))
+        screen.appendChild(document.createElement('p'))
+        if(result.includes("You win")){
+            playerWon++;
+            updateScore();
+        }else if(result.includes("You lose")){
+            computerWon++;
+            updateScore();
+        }
+    }));
 }
 
